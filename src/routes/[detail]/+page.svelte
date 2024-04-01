@@ -29,8 +29,13 @@
   });
 </script>
 
-<div class="max-w-[1024px] overflow-hidden">
-  <img bind:this={imageElement} src={image.src} />
+<div class="">
+  <img
+    bind:this={imageElement}
+    src={image.src}
+    class="mt-[50%] translate-y-2/4 md:mt-10 md:translate-y-0"
+    alt="An elegant description"
+  />
 </div>
 
 <style>
