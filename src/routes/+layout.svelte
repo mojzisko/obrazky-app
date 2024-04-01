@@ -15,7 +15,7 @@
   .app {
     display: flex;
     flex-direction: column;
-    height: 100svh;
+    min-height: 100svh;
   }
 
   main {
