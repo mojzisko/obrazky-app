@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+	height: -webkit-fill-available;
+  font-weight: 100;
+	letter-spacing: 2px;
+  font-style: normal;
+}
+
+body {
+	min-height: 100vh;
+	background-color: #FAF9F6;
+	min-height: -webkit-fill-available;
+}
+
+
+
+
