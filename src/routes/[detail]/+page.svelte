@@ -41,7 +41,7 @@
 <style>
   div {
     margin: 0 auto;
-    height: 100%;
+    height: calc(100svh - 114px);
     display: flex;
     align-items: center;
   }
