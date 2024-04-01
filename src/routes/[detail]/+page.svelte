@@ -29,7 +29,7 @@
   });
 </script>
 
-<div class="h-100svh">
+<div>
   <img
     bind:this={imageElement}
     src={image.src}
@@ -41,5 +41,6 @@
 <style>
   div {
     margin: 0 auto;
+    height: 100dvh;
   }
 </style>
