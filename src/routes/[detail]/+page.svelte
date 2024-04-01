@@ -29,7 +29,7 @@
   });
 </script>
 
-<div class="">
+<div class="h-100svh">
   <img
     bind:this={imageElement}
     src={image.src}
