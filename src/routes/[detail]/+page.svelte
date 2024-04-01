@@ -33,7 +33,7 @@
   <img
     bind:this={imageElement}
     src={image.src}
-    class="mt-[50%] translate-y-2/4 md:mt-10 md:translate-y-0"
+    class="md:mt-10 md:translate-y-0"
     alt="An elegant description"
   />
 </div>
@@ -41,5 +41,8 @@
 <style>
   div {
     margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
   }
 </style>
