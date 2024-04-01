@@ -41,6 +41,5 @@
 <style>
   div {
     margin: 0 auto;
-    height: 100svh;
   }
 </style>
