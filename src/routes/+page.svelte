@@ -1,6 +1,14 @@
 <script>
   import { tweened } from "svelte/motion";
   import { cubicOut } from "svelte/easing";
+  import ModalSlider from "./ModalSlider.svelte";
+  let showModal = false;
+  export let currentSlideIndex = null;
+
+  function openModal(index) {
+    currentSlideIndex = index;
+    showModal = true;
+  }
 
   function inViewport(node) {
     const opacity = tweened(0, { duration: 1500, easing: cubicOut });
@@ -81,8 +89,8 @@
 
 <section>
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-    {#each artImages as image (image.id)}
-      <a href={image.href} class="overflow-hidden">
+    {#each artImages as image, index (image.id)}
+      <a class="overflow-hidden" on:click={() => openModal(index)}>
         <img
           use:hoverEffect
           use:inViewport
@@ -93,6 +101,13 @@
       </a>
     {/each}
   </div>
+  {#if showModal}
+    <ModalSlider
+      on:close={() => (showModal = false)}
+      slides={artImages}
+      {currentSlideIndex}
+    />
+  {/if}
 </section>
 
 <style>
