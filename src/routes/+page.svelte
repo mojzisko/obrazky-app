@@ -1,4 +1,5 @@
 <script>
+  import { onDestroy } from "svelte";
   import { tweened } from "svelte/motion";
   import { cubicOut } from "svelte/easing";
   import ModalSlider from "./ModalSlider.svelte";
@@ -85,6 +86,13 @@
 <svelte:head>
   <title>Home</title>
   <meta name="description" content="Obrázky od Magdalény" />
+  {#if showModal}
+    <style>
+      body {
+        overflow: hidden;
+      }
+    </style>
+  {/if}
 </svelte:head>
 
 <section>

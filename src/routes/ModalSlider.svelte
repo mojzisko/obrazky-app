@@ -107,9 +107,10 @@
 </script>
 
 <div
-  class="fixed inset-0 bg-black bg-opacity-75 p-4 flex justify-center items-center z-50"
+  class="fixed inset-0 bg-black bg-opacity-50 p-4 flex justify-center items-center z-50"
   on:touchstart={handleTouchStart}
   on:touchend={handleTouchEnd}
+  on:click={() => dispatch("close")}
 >
   <button
     class="absolute top-4 right-4 text-white"
@@ -124,7 +125,7 @@
           out:hslide={transition_args}
           src={slides[currentSlideIndex].url}
           alt={slides[currentSlideIndex].title}
-          class="max-w-full max-h-full object-contain "
+          class="max-w-full max-h-full object-contain z-10 "
         />
       {/if}
     {/each}
