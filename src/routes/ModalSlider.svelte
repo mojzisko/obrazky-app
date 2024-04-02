@@ -35,7 +35,7 @@
   function animateSlideIn(index, direction) {
     gsap.fromTo(
       slideElements[index],
-      { x: direction > 0 ? 200 : -200, opacity: 0 }, // Start from right if next, from left if prev
+      { x: direction < 0 ? 200 : -200, opacity: 0 }, // Start from right if next, from left if prev
       { x: 0, opacity: 1, duration: 0.5, ease: "power2.out" }
     );
   }
@@ -43,7 +43,7 @@
   // Function to animate slide out to the right or left
   function animateSlideOut(currentIndex, direction, onComplete) {
     gsap.to(slideElements[currentIndex], {
-      x: direction > 0 ? -200 : 200, // Move to left if next, to right if prev
+      x: direction < 0 ? -200 : 200, // Move to left if next, to right if prev
       opacity: 0,
       duration: 0.5,
       ease: "power2.in",
