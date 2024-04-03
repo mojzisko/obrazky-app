@@ -1,108 +1,85 @@
 <script>
-  import { gsap } from "gsap";
-  import { hslide } from "$lib/functions.js";
-  import { createEventDispatcher, onMount, onDestroy } from "svelte";
+  import gsap from "gsap";
+  import { createEventDispatcher, onMount } from "svelte";
 
   export let slides;
   export let currentSlideIndex;
 
   const dispatch = createEventDispatcher();
+  let slideElements = [];
 
-  const transition_args = {
-    duration: 200,
-  };
+  // GSAP animations for slide transitions
+  function slideTo(index, direction) {
+    const distance = direction === "next" ? 100 : -100;
+    const currentElement = slideElements[currentSlideIndex];
+    const nextElement = slideElements[index];
 
-  const clamp = (number, min, max) => Math.min(Math.max(number, min), max);
-
-  console.log("slides", slides);
-  console.log("currentSlideIndex", currentSlideIndex);
-  // Keyboard navigation
-  function handleKeydown(event) {
-    if (event.key === "ArrowLeft") {
-      prev();
-    } else if (event.key === "ArrowRight") {
-      next();
-    }
-  }
-
-  // Touch swipe navigation
-  let touchstartX = 0;
-  let touchendX = 0;
-
-  let slideElements = []; // To hold references to all slide DOM elements
-
-  // Function to animate slide in from the right or left
-  function animateSlideIn(index, direction) {
-    gsap.fromTo(
-      slideElements[index],
-      { x: direction < 0 ? 200 : -200, opacity: 0 }, // Start from right if next, from left if prev
-      { x: 0, opacity: 1, duration: 0.5, ease: "power2.out" }
-    );
-  }
-
-  // Function to animate slide out to the right or left
-  function animateSlideOut(currentIndex, direction, onComplete) {
-    gsap.to(slideElements[currentIndex], {
-      x: direction < 0 ? -200 : 200, // Move to left if next, to right if prev
+    // Animate out the current slide
+    gsap.to(currentElement, {
+      xPercent: -distance,
       opacity: 0,
       duration: 0.5,
-      ease: "power2.in",
-      onComplete: () => {
-        onComplete?.();
-      },
+      ease: "power1.out",
     });
-  }
 
-  function changeSlide(newIndex, direction) {
-    const onComplete = () => {
-      currentSlideIndex = newIndex;
-      animateSlideIn(newIndex, direction);
-    };
-    animateSlideOut(currentSlideIndex, direction, onComplete);
+    // Animate in the new slide
+    gsap.fromTo(
+      nextElement,
+      { xPercent: distance, opacity: 0 },
+      { xPercent: 0, opacity: 1, duration: 0.7, ease: "power1.inOut" }
+    );
+
+    currentSlideIndex = index;
   }
 
   function next() {
-    let newIndex = (currentSlideIndex + 1) % slides.length;
-    changeSlide(newIndex, -1);
+    const newIndex = (currentSlideIndex + 1) % slides.length;
+    slideTo(newIndex, "next");
   }
 
   function prev() {
-    let newIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
-    changeSlide(newIndex, 1);
+    const newIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+    slideTo(newIndex, "prev");
   }
 
-  // function next() {
-  //     currentSlideIndex = clamp(currentSlideIndex + 1, 0, slides.length - 1);
-  //   }
-
-  //   function prev() {
-  //     currentSlideIndex = clamp(currentSlideIndex - 1, 0, slides.length - 1);
-  //   }
+  let touchstartX = 0;
+  let touchstartY = 0; // For vertical swipe detection
+  let touchendX = 0;
+  let touchendY = 0; // For vertical swipe detection
 
   function handleTouchStart(event) {
     touchstartX = event.touches[0].screenX;
+    touchstartY = event.touches[0].screenY; // Capture starting Y coordinate
   }
 
   function handleTouchEnd(event) {
     touchendX = event.changedTouches[0].screenX;
-    handleSwipeGesture();
+    touchendY = event.changedTouches[0].screenY; // Capture ending Y coordinate
+
+    // Calculate the differences in X and Y
+    const diffX = touchendX - touchstartX;
+    const diffY = touchendY - touchstartY;
+
+    // Check if the swipe is more horizontal than vertical
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      // Proceed with the swipe if it's predominantly horizontal
+      if (diffX < 0) {
+        next();
+      } else {
+        prev();
+      }
+    }
+    // If the vertical movement is greater, do nothing (ignore the swipe)
   }
 
-  function handleSwipeGesture() {
-    if (touchendX < touchstartX) {
-      next();
-    }
-    if (touchendX > touchstartX) {
-      prev();
-    }
-  }
-
-  // Adding event listeners
   onMount(() => {
-    window.addEventListener("keydown", handleKeydown);
-    return () => {
-      window.removeEventListener("keydown", handleKeydown);
-    };
+    gsap.set(slideElements, { xPercent: 100, opacity: 0 });
+    gsap.set(slideElements[currentSlideIndex], { xPercent: 0, opacity: 1 });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") prev();
+      if (event.key === "ArrowRight") next();
+    });
   });
 </script>
 
@@ -113,39 +90,21 @@
   on:click={() => dispatch("close")}
 >
   <button
-    class="absolute top-4 right-4 text-white"
-    on:click={() => dispatch("close")}>Close</button
+    class="absolute top-4 right-4 text-white z-20"
+    on:click={(event) => {
+      event.stopPropagation();
+      dispatch("close");
+    }}>Close</button
   >
-  {#if currentSlideIndex !== null}
-    {#each slides as slide, id (slide.id)}
-      {#if id === currentSlideIndex}
-        <img
-          bind:this={slideElements[id]}
-          in:hslide={transition_args}
-          out:hslide={transition_args}
-          src={slides[currentSlideIndex].url}
-          alt={slides[currentSlideIndex].title}
-          class="max-w-full max-h-full object-contain z-10 "
-        />
-      {/if}
-    {/each}
-
-    <!-- <div
-      class="hslide-container"
-      in:hslide={transition_args}
-      out:hslide={transition_args}
-    >
-      <img
-        src={slides[currentSlideIndex].url}
-        alt={slides[currentSlideIndex].title}
-        class="max-w-full max-h-full object-contain"
-      />
-      <div class="controls">
-        <button on:click={prev}>&lt;</button>
-        <button on:click={next}>&gt;</button>
-      </div>
-    </div> -->
-  {/if}
+  {#each slides as slide, i (slide.id)}
+    <img
+      bind:this={slideElements[i]}
+      src={slide.url}
+      alt={slide.title}
+      class="max-w-full max-h-full object-contain absolute"
+      style="opacity: 0; transition: opacity 0.5s ease;"
+    />
+  {/each}
 </div>
 
 <style>
