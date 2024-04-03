@@ -16,64 +16,62 @@
     });
     gsap.to(slideElements[currentSlideIndex], { opacity: 1, duration: 0.5 });
 
-    // Listen for arrow key navigation
     const handleKeydown = (event) => {
       if (event.key === "ArrowLeft") prev();
       if (event.key === "ArrowRight") next();
     };
     window.addEventListener("keydown", handleKeydown);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeydown);
-    };
+    return () => window.removeEventListener("keydown", handleKeydown);
   });
 
   function slideTo(index, direction) {
-    const currentElement = slideElements[currentSlideIndex];
-    const nextElement = slideElements[index];
     const distance = direction === "next" ? 100 : -100;
-
-    gsap.to(currentElement, {
+    gsap.to(slideElements[currentSlideIndex], {
       xPercent: -distance,
       opacity: 0,
       duration: 0.5,
       ease: "power1.in",
     });
     gsap.fromTo(
-      nextElement,
+      slideElements[index],
       { xPercent: distance, opacity: 0 },
       { xPercent: 0, opacity: 1, duration: 0.7, ease: "power1.out" }
     );
-
     currentSlideIndex = index;
   }
 
   function next() {
-    slideTo((currentSlideIndex + 1) % slides.length, "next");
+    const newIndex = (currentSlideIndex + 1) % slides.length;
+    slideTo(newIndex, "next");
   }
 
   function prev() {
-    slideTo((currentSlideIndex - 1 + slides.length) % slides.length, "prev");
+    const newIndex = (currentSlideIndex + slides.length - 1) % slides.length;
+    slideTo(newIndex, "prev");
   }
 
   let startX, startY, endX, endY;
 
   function handleTouchStart(event) {
-    startX = event.touches[0].screenX;
-    startY = event.touches[0].screenY;
+    if (event.touches.length === 1) {
+      startX = event.touches[0].screenX;
+      startY = event.touches[0].screenY;
+    }
   }
 
   function handleTouchEnd(event) {
-    endX = event.changedTouches[0].screenX;
-    endY = event.changedTouches[0].screenY;
+    if (event.changedTouches.length === 1) {
+      endX = event.changedTouches[0].screenX;
+      endY = event.changedTouches[0].screenY;
 
-    const diffX = endX - startX;
-    const diffY = endY - startY;
+      const diffX = endX - startX;
+      const diffY = endY - startY;
 
-    // Additional check for the number of touches to differentiate between swipe and pinch
-    if (event.touches.length < 2 && Math.abs(diffX) > Math.abs(diffY)) {
-      if (diffX < 0) next();
-      else prev();
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30) {
+        if (diffX < 0) next();
+        else prev();
+      }
     }
   }
 </script>
