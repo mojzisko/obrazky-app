@@ -70,7 +70,8 @@
     const diffX = endX - startX;
     const diffY = endY - startY;
 
-    if (Math.abs(diffX) > Math.abs(diffY)) {
+    // Additional check for the number of touches to differentiate between swipe and pinch
+    if (event.touches.length < 2 && Math.abs(diffX) > Math.abs(diffY)) {
       if (diffX < 0) next();
       else prev();
     }
