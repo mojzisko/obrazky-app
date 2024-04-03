@@ -37,10 +37,6 @@
     }
   }
 
-  function handleTouchMove(event) {
-    // Optional: Implement logic here if you need to handle touch move specifically
-  }
-
   function handleTouchEnd(event) {
     if (!isSwiping || event.changedTouches.length > 1) {
       // Not a swipe or end of a multi-touch event, no action required
@@ -85,7 +81,6 @@
 <div
   class="fixed inset-0 bg-black bg-opacity-50 p-4 flex justify-center items-center z-50"
   on:touchstart={handleTouchStart}
-  on:touchmove={handleTouchMove}
   on:touchend={handleTouchEnd}
   on:click={() => dispatch("close")}
 >
@@ -96,7 +91,7 @@
       dispatch("close");
     }}
   >
-    Close
+    Zavřít
   </button>
   {#each slides as slide, i (slide.id)}
     <img
