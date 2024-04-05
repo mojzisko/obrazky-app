@@ -39,7 +39,7 @@
   <h1 bind:this={title} class="text-3xl md:text-5xl text-left">Vítej!</h1>
   <div class="mt-6 space-y-4 text-gray-600">
     <p class="text-base md:text-lg leading-relaxed">
-      Jmenuju se Magdaléna a jsem ráda, že Tě můžu přivítat v&nbsp;mé malé
+      Jmenuji se Magdaléna a jsem ráda, že Tě můžu přivítat v&nbsp;mé malé
       online galerii.
     </p>
     <p class="text-base md:text-lg leading-relaxed">
